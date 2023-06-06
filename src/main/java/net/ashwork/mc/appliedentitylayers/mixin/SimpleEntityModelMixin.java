@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.mixin;
 
 import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;

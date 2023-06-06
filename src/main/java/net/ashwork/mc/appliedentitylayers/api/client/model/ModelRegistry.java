@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.api.client.model;
 
 import net.minecraft.client.model.EntityModel;

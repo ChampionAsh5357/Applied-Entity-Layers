@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.client.impl;
 
 import net.ashwork.mc.appliedentitylayers.api.client.AppliedEntityLayersPlugin;
@@ -26,7 +31,6 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerPartGetter(EntityType.DONKEY);
         registry.registerPartGetter(EntityType.DROWNED);
         registry.registerPartGetter(EntityType.ELDER_GUARDIAN);
-        // ender dragon
         registry.registerPartGetter(EntityType.ENDERMAN);
         registry.registerPartGetter(EntityType.ENDERMITE);
         registry.registerPartGetter(EntityType.EVOKER);

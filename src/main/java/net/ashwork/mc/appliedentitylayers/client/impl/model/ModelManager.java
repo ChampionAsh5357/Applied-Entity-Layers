@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.client.impl.model;
 
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelRegistry;
