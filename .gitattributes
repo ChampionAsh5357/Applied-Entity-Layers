@@ -1,0 +1,4 @@
+# Set End-Of-Line (EOL) to Line Feed (LF)
+**/*.json text eol=lf
+**/*.toml text eol=lf
+**/*.mcmeta text eol=lf

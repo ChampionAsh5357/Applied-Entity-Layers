@@ -1,0 +1,27 @@
+[versions]
+# Java
+java = "17"
+
+# Minecraft
+minecraft = "1.19.4"
+forge_main = "1.19.4-45.0.64"
+parchment_mappings = "1.19.3-2023.03.12"
+
+# Mixin
+mixin_processor = "0.8.5"
+
+# Plugins
+forge_gradle = "[6.0,6.2)"
+mixin_plugin = "0.7-SNAPSHOT"
+parchment_librarian = "1.+"
+licenser = "0.6.1"
+
+[libraries]
+forge = { group = "net.minecraftforge", name = "forge", version.ref = "forge_main" }
+mixin_processor = { group = "org.spongepowered", name = "mixin", version.ref = "mixin_processor" }
+
+[plugins]
+forge_gradle = { id = "net.minecraftforge.gradle", version.ref = "forge_gradle" }
+mixin_plugin = { id = "org.spongepowered.mixin", version.ref = "mixin_plugin" }
+parchment_librarian = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "parchment_librarian" }
+licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }

@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[${loader_version},)"
+license = "${license}"
+issueTrackerURL = "${issue_tracker_url}"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${version}"
+displayName = "${mod_name}"
+# updateJSONURL = "" # TODO: Add json url
+displayURL = "${display_url}"
+# logoFile = "" # TODO: Design logo again
+# credits = "" No credits yet
+authors = "${author}"
+displayTest = "IGNORE_ALL_VERSION"
+description = '''
+${mod_description}
+'''
+features = { "java_version" = "${java_version}"}
+
+[[dependencies.${mod_id}]]
+    modId = "forge"
+    mandatory = true
+    versionRange = "[${forge_version},)"
+    ordering = "NONE"
+    side = "CLIENT"
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[${minecraft_version}]"
+    ordering = "NONE"
+    side = "CLIENT"

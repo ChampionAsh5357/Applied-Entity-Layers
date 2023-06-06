@@ -1,0 +1,26 @@
+# Eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+eclipse
+
+# Idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# Visual Studio Code
+.vscode
+
+# Gradle
+build
+.gradle
+
+# Project
+run
+generated
