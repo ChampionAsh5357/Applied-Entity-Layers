@@ -5,11 +5,13 @@
 
 package net.ashwork.mc.appliedentitylayers.client;
 
+import net.ashwork.mc.appliedentitylayers.api.ConditionalPlugin;
 import net.ashwork.mc.appliedentitylayers.api.client.AppliedEntityLayersPlugin;
 import net.ashwork.mc.appliedentitylayers.client.model.ModelManager;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 
 import java.util.ServiceLoader;
 
@@ -37,8 +39,26 @@ public class AppliedEntityLayersClient {
      * @param event an event instance
      */
     private static void buildModelData(EntityRenderersEvent.RegisterRenderers event) {
-        ServiceLoader.load(AppliedEntityLayersPlugin.class).forEach(plugin -> plugin.registerModels(MODEL_MANAGER));
+        ServiceLoader.load(AppliedEntityLayersPlugin.class)
+                // Check if plugins should be loaded
+                .stream().filter(AppliedEntityLayersClient::shouldLoadPlugin)
+                // Load plugin
+                .map(ServiceLoader.Provider::get)
+                // Register models
+                .forEach(plugin -> plugin.registerModels(MODEL_MANAGER));
         MODEL_MANAGER.build();
+    }
+
+    /**
+     * {@return whether the plugin should be loaded by the service loader}
+     *
+     * @param provider the provider containing the lazy plugin
+     */
+    private static boolean shouldLoadPlugin(ServiceLoader.Provider<AppliedEntityLayersPlugin> provider) {
+        var type = provider.type();
+        // Check if the plugin is not conditional
+        // If it is conditional, check if the mod is loaded
+        return !type.isAnnotationPresent(ConditionalPlugin.class) || ModList.get().isLoaded(type.getAnnotation(ConditionalPlugin.class).value());
     }
 
     /**
