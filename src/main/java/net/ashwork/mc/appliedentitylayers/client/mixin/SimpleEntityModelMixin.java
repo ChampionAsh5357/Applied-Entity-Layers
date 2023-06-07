@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
-import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
 import net.minecraft.client.model.AllayModel;
 import net.minecraft.client.model.AxolotlModel;
 import net.minecraft.client.model.BatModel;
@@ -62,6 +62,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.List;
 
+/**
+ * A mixin applied to all entity models to construct the list of non-empty parts.
+ */
 @Mixin({
         AllayModel.class, AxolotlModel.class, BatModel.class, BeeModel.class,
         BlazeModel.class, CamelModel.class, CodModel.class, ChickenModel.class,
@@ -76,13 +79,20 @@ import java.util.List;
         TropicalFishModelB.class, VexModel.class, VillagerModel.class, WardenModel.class,
         WitherBossModel.class, WolfModel.class
 })
-public abstract class SimpleEntityModelMixin implements InternalModelPartGetter {
+public abstract class SimpleEntityModelMixin implements BasicModelTransformations {
 
     @Unique private List<ModelPart> eamNonEmptyParts;
 
+    /**
+     * An injection to the tail of the constructors to set the non-empty parts of
+     * a model.
+     *
+     * @param root the root of the model
+     * @return the {@code root}
+     */
     @ModifyVariable(at = @At("TAIL"), method = "<init>*", argsOnly = true, ordinal = 0)
     private ModelPart postInit(ModelPart root) {
-        this.eamNonEmptyParts = InternalModelPartGetter.parts(root);
+        this.eamNonEmptyParts = BasicModelTransformations.parts(root);
         return root;
     }
 

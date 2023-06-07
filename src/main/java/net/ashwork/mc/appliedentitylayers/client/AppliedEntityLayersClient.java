@@ -6,7 +6,7 @@
 package net.ashwork.mc.appliedentitylayers.client;
 
 import net.ashwork.mc.appliedentitylayers.api.client.AppliedEntityLayersPlugin;
-import net.ashwork.mc.appliedentitylayers.client.impl.model.ModelManager;
+import net.ashwork.mc.appliedentitylayers.client.model.ModelManager;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,20 +24,29 @@ public class AppliedEntityLayersClient {
      * Initialize the client information for this mod.
      *
      * @param modBus the mod event bus
-     * @param forgeBus the Forge event bus
      */
-    public static void init(IEventBus modBus, IEventBus forgeBus) {
+    public static void init(IEventBus modBus) {
         modBus.addListener(EventPriority.LOWEST, AppliedEntityLayersClient::buildModelData);
         modBus.addListener(EventPriority.LOWEST, AppliedEntityLayersClient::addLayers);
     }
 
-    // TODO: Document
+    /**
+     * Loads all plugins and builds the data associated with the model. The data
+     * is registered statically, similar to the renderer factories.
+     *
+     * @param event an event instance
+     */
     private static void buildModelData(EntityRenderersEvent.RegisterRenderers event) {
         ServiceLoader.load(AppliedEntityLayersPlugin.class).forEach(plugin -> plugin.registerModels(MODEL_MANAGER));
         MODEL_MANAGER.build();
     }
 
-    // TODO: Document
+    /**
+     * Applies the layers to the renderer based on the provided data for the
+     * associated entity type.
+     *
+     * @param event an event instance
+     */
     private static void addLayers(EntityRenderersEvent.AddLayers event) {
         MODEL_MANAGER.applyLayers(event::getRenderer);
     }

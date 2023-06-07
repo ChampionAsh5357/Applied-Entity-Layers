@@ -9,14 +9,32 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.function.Function;
-
-// TODO: Document
+/**
+ * A registry for models which would like to use the entity layers provided by
+ * this mod.
+ */
 public interface ModelRegistry {
 
-    default <T extends LivingEntity> void registerPartGetter(EntityType<T> type) {
-        this.registerPartGetter(type, model -> (ModelPartGetter) model);
+    /**
+     * Registers a {@link ModelTransformations.ModelTransformationsGetter} for an
+     * entity to apply the necessary transformations for the given model. This
+     * assumes that {@link ModelTransformations} is implemented on the model itself.
+     *
+     * @param type the entity type to register the transformation getter for
+     * @param <T> the type of the living entity
+     */
+    default <T extends LivingEntity> void registerTransformations(EntityType<T> type) {
+        this.registerTransformations(type, model -> (ModelTransformations) model);
     }
 
-    <T extends LivingEntity, M extends EntityModel<T>> void registerPartGetter(EntityType<T> type, Function<M, ModelPartGetter> getter);
+    /**
+     * Registers a {@link ModelTransformations.ModelTransformationsGetter} for an
+     * entity to apply the necessary transformations for the given model.
+     *
+     * @param type the entity type to register the transformation getter for
+     * @param getter the getter which obtains the transformations from the model
+     * @param <T> the type of the living entity
+     * @param <M> the type of the entity model
+     */
+    <T extends LivingEntity, M extends EntityModel<T>> void registerTransformations(EntityType<T> type, ModelTransformations.ModelTransformationsGetter<T, M> getter);
 }

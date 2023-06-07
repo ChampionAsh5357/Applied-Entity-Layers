@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 
+/**
+ * A mixin applied to {@link CamelModel}.
+ */
 @Mixin(CamelModel.class)
-public abstract class CamelModelMixin extends HierarchicalModel<Entity> implements InternalModelPartGetter {
+public abstract class CamelModelMixin extends HierarchicalModel<Entity> implements BasicModelTransformations {
 
     @Override
-    public void translateAndRotate(PoseStack pose, ModelPart part) {
+    public void transformTo(PoseStack pose, ModelPart part) {
         // Check if young
         if (this.young) {
             pose.scale(0.45f, 0.45f, 0.45f);
@@ -25,6 +28,6 @@ public abstract class CamelModelMixin extends HierarchicalModel<Entity> implemen
         }
 
         // Perform transformation
-        InternalModelPartGetter.super.translateAndRotate(pose, part);
+        BasicModelTransformations.super.transformTo(pose, part);
     }
 }

@@ -1,17 +1,15 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "net.ashwork.mc.appliedentitylayers.mixin",
+    "package": "net.ashwork.mc.appliedentitylayers.client.mixin",
     "compatibilityLevel": "JAVA_${java_version}",
     "client": [
         "ModelPartMixin",
         "SimpleEntityModelMixin",
-
         "CamelModelMixin",
         "LlamaModelMixin",
         "RabbitModelMixin",
         "TurtleModelMixin",
-
         "AgeableListModelMixin",
         "AgeableHierarchicalModelMixin"
     ],

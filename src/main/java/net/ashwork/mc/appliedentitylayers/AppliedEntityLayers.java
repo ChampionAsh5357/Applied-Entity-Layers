@@ -36,7 +36,7 @@ public class AppliedEntityLayers {
 
         // Setup client
         if (FMLEnvironment.dist == Dist.CLIENT)
-            AppliedEntityLayersClient.init(modBus, forgeBus);
+            AppliedEntityLayersClient.init(modBus);
 
         // Setup data
         AppliedEntityLayersData.init(modBus);

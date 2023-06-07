@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -16,8 +16,11 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * A mixin applied to {@link AgeableListModel}.
+ */
 @Mixin(AgeableListModel.class)
-public abstract class AgeableListModelMixin extends EntityModel<Entity> implements InternalModelPartGetter {
+public abstract class AgeableListModelMixin extends EntityModel<Entity> implements BasicModelTransformations {
 
     @Final @Shadow private boolean scaleHead;
     @Final @Shadow private float babyYHeadOffset;
@@ -28,11 +31,11 @@ public abstract class AgeableListModelMixin extends EntityModel<Entity> implemen
     @Shadow protected abstract Iterable<ModelPart> headParts();
 
     @Override
-    public void translateAndRotate(PoseStack pose, ModelPart part) {
+    public void transformTo(PoseStack pose, ModelPart part) {
         // Check if young
         if (this.young) {
             // If head
-            if (InternalModelPartGetter.isIn(part, Sets.newHashSet(this.headParts()))) {
+            if (BasicModelTransformations.isIn(part, Sets.newHashSet(this.headParts()))) {
                 if (this.scaleHead) {
                     var invHeadScale = 1.5f / this.babyHeadScale;
                     pose.scale(invHeadScale, invHeadScale, invHeadScale);
@@ -47,6 +50,6 @@ public abstract class AgeableListModelMixin extends EntityModel<Entity> implemen
         }
 
         // Perform transformation
-        InternalModelPartGetter.super.translateAndRotate(pose, part);
+        BasicModelTransformations.super.transformTo(pose, part);
     }
 }

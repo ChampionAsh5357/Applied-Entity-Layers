@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.client.renderer.entity.layers;
+package net.ashwork.mc.appliedentitylayers.client.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -15,14 +15,25 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
 
-import java.util.function.Function;
-
-//TODO: Document
+/**
+ * An extension on {@link net.minecraft.client.renderer.entity.layers.ArrowLayer}
+ * that can be applied to any entity.
+ *
+ * @param <T> the type of the living entity
+ * @param <M> the type of the entity model
+ */
 public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extends ExpandedStuckInBodyLayer<T, M> {
 
     private final EntityRenderDispatcher dispatcher;
 
-    public ExpandedArrowLayer(RenderLayerParent<T, M> parent, Function<M, ModelPartGetter> getter, EntityRenderDispatcher dispatcher) {
+    /**
+     * Constructs the arrow layer.
+     *
+     * @param parent the parent holding the layer
+     * @param getter the getter which obtains the transformations from the model
+     * @param dispatcher the dispatcher used to render an entity
+     */
+    public ExpandedArrowLayer(RenderLayerParent<T, M> parent, ModelTransformations.ModelTransformationsGetter<T, M> getter, EntityRenderDispatcher dispatcher) {
         super(parent, getter, 0);
         this.dispatcher = dispatcher;
     }

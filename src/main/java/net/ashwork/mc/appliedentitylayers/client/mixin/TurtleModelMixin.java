@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.TurtleModel;
@@ -12,17 +12,19 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-// TODO: Document
+/**
+ * A mixin applied to {@link TurtleModel}.
+ */
 @Mixin(TurtleModel.class)
 public abstract class TurtleModelMixin extends AgeableListModelMixin {
 
     @Shadow @Final private ModelPart eggBelly;
 
     @Override
-    public void translateAndRotate(PoseStack pose, ModelPart part) {
+    public void transformTo(PoseStack pose, ModelPart part) {
         if (this.eggBelly.visible)
             pose.translate(0f, -0.08f, 0f);
 
-        super.translateAndRotate(pose, part);
+        super.transformTo(pose, part);
     }
 }

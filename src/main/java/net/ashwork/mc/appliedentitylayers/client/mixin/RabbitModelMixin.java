@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.RabbitModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -22,8 +22,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
 
+/**
+ * A mixin applied to {@link RabbitModel}.
+ */
 @Mixin(RabbitModel.class)
-public abstract class RabbitModelMixin extends EntityModel<Entity> implements InternalModelPartGetter {
+public abstract class RabbitModelMixin extends EntityModel<Entity> implements BasicModelTransformations {
 
     @Shadow @Final private ModelPart head;
     @Shadow @Final private ModelPart leftEar;
@@ -31,17 +34,24 @@ public abstract class RabbitModelMixin extends EntityModel<Entity> implements In
     @Shadow @Final private ModelPart nose;
     @Unique private Set<ModelPart> eamHeadParts;
 
+    /**
+     * An injection to the tail of the constructor to get the head parts of the
+     * model.
+     *
+     * @param root the root of the model
+     * @param ci a handler for managing callbacks to the original method
+     */
     @Inject(at = @At("TAIL"), method = "<init>")
     private void postInit(ModelPart root, CallbackInfo ci) {
         this.eamHeadParts = ImmutableSet.of(this.head, this.leftEar, this.rightEar, this.nose);
     }
 
     @Override
-    public void translateAndRotate(PoseStack pose, ModelPart part) {
+    public void transformTo(PoseStack pose, ModelPart part) {
         // Check if young
         if (this.young) {
             // If the head
-            if (InternalModelPartGetter.isIn(part, this.eamHeadParts)) {
+            if (BasicModelTransformations.isIn(part, this.eamHeadParts)) {
                 pose.scale(0.56666666f, 0.56666666f, 0.56666666f);
                 pose.translate(0f, 1.375f, 0.125f);
             } else {
@@ -56,6 +66,6 @@ public abstract class RabbitModelMixin extends EntityModel<Entity> implements In
         }
 
         // Perform transformation
-        InternalModelPartGetter.super.translateAndRotate(pose, part);
+        BasicModelTransformations.super.transformTo(pose, part);
     }
 }

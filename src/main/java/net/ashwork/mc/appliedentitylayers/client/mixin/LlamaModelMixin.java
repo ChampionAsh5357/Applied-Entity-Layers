@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.mixin;
+package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.impl.model.InternalModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -22,13 +22,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
 
+/**
+ * A mixin applied to {@link LlamaModel}.
+ */
 @Mixin(LlamaModel.class)
-public abstract class LlamaModelMixin extends EntityModel<Entity> implements InternalModelPartGetter {
+public abstract class LlamaModelMixin extends EntityModel<Entity> implements BasicModelTransformations {
 
     @Shadow @Final private ModelPart head;
     @Shadow @Final private ModelPart body;
     @Unique private Set<ModelPart> eamHeadParts, eamBodyParts;
 
+    /**
+     * An injection to the tail of the constructor to get the head and body parts
+     * of the model.
+     *
+     * @param root the root of the model
+     * @param ci a handler for managing callbacks to the original method
+     */
     @Inject(at = @At("TAIL"), method = "<init>")
     private void postInit(ModelPart root, CallbackInfo ci) {
         this.eamHeadParts = ImmutableSet.of(this.head);
@@ -36,14 +46,14 @@ public abstract class LlamaModelMixin extends EntityModel<Entity> implements Int
     }
 
     @Override
-    public void translateAndRotate(PoseStack pose, ModelPart part) {
+    public void transformTo(PoseStack pose, ModelPart part) {
         // Check if young
         if (this.young) {
             // If the head
-            if (InternalModelPartGetter.isIn(part, this.eamHeadParts)) {
+            if (BasicModelTransformations.isIn(part, this.eamHeadParts)) {
                 pose.scale(0.71428573f, 0.64935064f, 0.7936508f);
                 pose.translate(0f, 1.3125f, 0.22f);
-            } else if (InternalModelPartGetter.isIn(part, this.eamBodyParts)) {
+            } else if (BasicModelTransformations.isIn(part, this.eamBodyParts)) {
                 // Else the body
                 pose.scale(0.625f, 0.45454544f, 0.45454544f);
                 pose.translate(0f, 2.0625f, 0f);
@@ -55,6 +65,6 @@ public abstract class LlamaModelMixin extends EntityModel<Entity> implements Int
         }
 
         // Perform transformation
-        InternalModelPartGetter.super.translateAndRotate(pose, part);
+        BasicModelTransformations.super.transformTo(pose, part);
     }
 }

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.client.renderer.entity.layers;
+package net.ashwork.mc.appliedentitylayers.client.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelPartGetter;
+import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,15 +17,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.function.Function;
-
-//TODO: Document
+/**
+ * An extension on {@link net.minecraft.client.renderer.entity.layers.BeeStingerLayer}
+ * that can be applied to any entity.
+ *
+ * @param <T> the type of the living entity
+ * @param <M> the type of the entity model
+ */
 public class ExpandedBeeStingerLayer<T extends LivingEntity, M extends EntityModel<T>> extends ExpandedStuckInBodyLayer<T, M> {
 
     private static final ResourceLocation BEE_STINGER_LOCATION = new ResourceLocation("textures/entity/bee/bee_stinger.png");
     private final RenderType type;
 
-    public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, Function<M, ModelPartGetter> getter) {
+    /**
+     * Constructs the bee stinger layer.
+     *
+     * @param parent the parent holding the layer
+     * @param getter the getter which obtains the transformations from the model
+     */
+    public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, ModelTransformations.ModelTransformationsGetter<T, M> getter) {
         super(parent, getter, 1);
         this.type = RenderType.entityCutoutNoCull(BEE_STINGER_LOCATION);
     }
