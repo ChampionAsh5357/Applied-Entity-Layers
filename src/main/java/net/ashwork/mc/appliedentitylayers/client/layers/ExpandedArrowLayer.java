@@ -46,7 +46,7 @@ public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>
     @Override
     protected void renderStuckItem(PoseStack pose, MultiBufferSource vao, int packedLight, T entity, float xRand, float yRand, float zRand, float partialTick) {
         // Create arrow and set rotations
-        var arrow = new Arrow(entity.getLevel(), entity.getX(), entity.getY(), entity.getZ());
+        var arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ());
         arrow.setYRot((float) Math.toDegrees(Math.atan2(xRand, zRand)));
         arrow.setXRot((float) Math.toDegrees(Math.atan2(yRand, Mth.sqrt(xRand * xRand + zRand * zRand))));
         arrow.yRotO = arrow.getYRot();
