@@ -7,7 +7,7 @@ package net.ashwork.mc.appliedentitylayers.client.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +16,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.function.Function;
 
 /**
  * An extension on {@link net.minecraft.client.renderer.entity.layers.BeeStingerLayer}
@@ -35,7 +37,7 @@ public class ExpandedBeeStingerLayer<T extends LivingEntity, M extends EntityMod
      * @param parent the parent holding the layer
      * @param getter the getter which obtains the transformations from the model
      */
-    public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, ModelTransformations.ModelTransformationsGetter<T, M> getter) {
+    public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter) {
         super(parent, getter, 1);
         this.type = RenderType.entityCutoutNoCull(BEE_STINGER_LOCATION);
     }

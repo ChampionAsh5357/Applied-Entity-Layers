@@ -6,12 +6,9 @@
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
-import net.minecraft.client.model.EntityModel;
+import net.ashwork.mc.appliedentitylayers.client.extension.LlamaModelExtension;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,7 +23,7 @@ import java.util.Set;
  * A mixin applied to {@link LlamaModel}.
  */
 @Mixin(LlamaModel.class)
-public abstract class LlamaModelMixin extends EntityModel<Entity> implements BasicModelTransformations {
+public abstract class LlamaModelMixin implements LlamaModelExtension {
 
     @Shadow @Final private ModelPart head;
     @Shadow @Final private ModelPart body;
@@ -46,25 +43,12 @@ public abstract class LlamaModelMixin extends EntityModel<Entity> implements Bas
     }
 
     @Override
-    public void transformTo(PoseStack pose, ModelPart part) {
-        // Check if young
-        if (this.young) {
-            // If the head
-            if (BasicModelTransformations.isIn(part, this.eamHeadParts)) {
-                pose.scale(0.71428573f, 0.64935064f, 0.7936508f);
-                pose.translate(0f, 1.3125f, 0.22f);
-            } else if (BasicModelTransformations.isIn(part, this.eamBodyParts)) {
-                // Else the body
-                pose.scale(0.625f, 0.45454544f, 0.45454544f);
-                pose.translate(0f, 2.0625f, 0f);
-            } else {
-                // Else the rest of parts
-                pose.scale(0.45454544f, 0.41322312f, 0.45454544f);
-                pose.translate(0f, 2.0625f, 0f);
-            }
-        }
+    public Set<ModelPart> head() {
+        return this.eamHeadParts;
+    }
 
-        // Perform transformation
-        BasicModelTransformations.super.transformTo(pose, part);
+    @Override
+    public Set<ModelPart> body() {
+        return this.eamBodyParts;
     }
 }

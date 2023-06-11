@@ -5,7 +5,7 @@
 
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
-import net.ashwork.mc.appliedentitylayers.client.model.ModelPartExtension;
+import net.ashwork.mc.appliedentitylayers.api.client.model.extension.ModelPartExtension;
 import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

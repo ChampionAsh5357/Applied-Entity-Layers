@@ -5,7 +5,8 @@
 
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
-import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
+import net.ashwork.mc.appliedentitylayers.client.extension.EntityModelExtension;
 import net.minecraft.client.model.AllayModel;
 import net.minecraft.client.model.AxolotlModel;
 import net.minecraft.client.model.BatModel;
@@ -66,6 +67,7 @@ import java.util.List;
  * A mixin applied to all entity models to construct the list of non-empty parts.
  */
 @Mixin({
+        // Minecraft
         AllayModel.class, AxolotlModel.class, BatModel.class, BeeModel.class,
         BlazeModel.class, CamelModel.class, CodModel.class, ChickenModel.class,
         CreeperModel.class, DolphinModel.class, EndermiteModel.class, FoxModel.class,
@@ -79,7 +81,7 @@ import java.util.List;
         TropicalFishModelB.class, VexModel.class, VillagerModel.class, WardenModel.class,
         WitherBossModel.class, WolfModel.class
 })
-public abstract class SimpleEntityModelMixin implements BasicModelTransformations {
+public abstract class SimpleEntityModelMixin implements EntityModelExtension {
 
     @Unique private List<ModelPart> eamNonEmptyParts;
 
@@ -92,7 +94,7 @@ public abstract class SimpleEntityModelMixin implements BasicModelTransformation
      */
     @ModifyVariable(at = @At("TAIL"), method = "<init>*", argsOnly = true, ordinal = 0)
     private ModelPart postInit(ModelPart root) {
-        this.eamNonEmptyParts = BasicModelTransformations.parts(root);
+        this.eamNonEmptyParts = ModelTransform.parts(root);
         return root;
     }
 

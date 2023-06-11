@@ -5,7 +5,7 @@
 
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.ashwork.mc.appliedentitylayers.client.extension.TurtleModelExtension;
 import net.minecraft.client.model.TurtleModel;
 import net.minecraft.client.model.geom.ModelPart;
 import org.spongepowered.asm.mixin.Final;
@@ -16,15 +16,12 @@ import org.spongepowered.asm.mixin.Shadow;
  * A mixin applied to {@link TurtleModel}.
  */
 @Mixin(TurtleModel.class)
-public abstract class TurtleModelMixin extends AgeableListModelMixin {
+public abstract class TurtleModelMixin implements TurtleModelExtension {
 
     @Shadow @Final private ModelPart eggBelly;
 
     @Override
-    public void transformTo(PoseStack pose, ModelPart part) {
-        if (this.eggBelly.visible)
-            pose.translate(0f, -0.08f, 0f);
-
-        super.transformTo(pose, part);
+    public boolean eggBellyVisible() {
+        return this.eggBelly.visible;
     }
 }

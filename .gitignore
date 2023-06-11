@@ -22,5 +22,6 @@ build
 .gradle
 
 # Project
+libs
 run
 generated

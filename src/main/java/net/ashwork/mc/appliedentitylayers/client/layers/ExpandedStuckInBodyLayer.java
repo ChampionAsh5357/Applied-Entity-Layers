@@ -6,7 +6,7 @@
 package net.ashwork.mc.appliedentitylayers.client.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -14,6 +14,9 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * An extension on {@link net.minecraft.client.renderer.entity.layers.StuckInBodyLayer}
@@ -24,7 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 
-    private final ModelTransformations.ModelTransformationsGetter<T, M> getter;
+    private final Supplier<ModelTransform> getter;
     private final int offset;
 
     /**
@@ -34,9 +37,9 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
      * @param getter the getter which obtains the transformations from the model
      * @param offset an offset to apply to the entity id when creating the random
      */
-    public ExpandedStuckInBodyLayer(RenderLayerParent<T, M> parent, ModelTransformations.ModelTransformationsGetter<T, M> getter, int offset) {
+    public ExpandedStuckInBodyLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, int offset) {
         super(parent);
-        this.getter = getter;
+        this.getter = () -> getter.apply(parent);
         this.offset = offset;
     }
 
@@ -69,25 +72,21 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
         if (stuck > 0) {
             // Create random and getter
             var random = RandomSource.create(entity.getId() + this.offset);
-            var transformations = this.getter.apply(this.getParentModel());
+            var transform = this.getter.get();
+
+            // Skip if no transformations are available
+            if (transform == null) return;
 
             // For each stuck object
             for (int i = 0; i < stuck; ++i) {
                 pose.pushPose();
 
                 // Get random part
-                var part = transformations.getRandomModelPart(random);
+                var part = transform.getRandomModelPart(random);
 
-                // If part is null, then stop rendering
-                if (part == null) {
-                    // Pop to match last push
-                    pose.popPose();
-                    return;
-                }
-
-                // Apply transformations
+                // Apply transform
                 var cube = part.getRandomCube(random);
-                transformations.transformTo(pose, part);
+                transform.transformTo(pose, part);
 
                 // Translate to stuck position
                 var xRand = random.nextFloat();

@@ -6,12 +6,9 @@
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.client.model.BasicModelTransformations;
-import net.minecraft.client.model.EntityModel;
+import net.ashwork.mc.appliedentitylayers.client.extension.RabbitModelExtension;
 import net.minecraft.client.model.RabbitModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,7 +23,7 @@ import java.util.Set;
  * A mixin applied to {@link RabbitModel}.
  */
 @Mixin(RabbitModel.class)
-public abstract class RabbitModelMixin extends EntityModel<Entity> implements BasicModelTransformations {
+public abstract class RabbitModelMixin implements RabbitModelExtension {
 
     @Shadow @Final private ModelPart head;
     @Shadow @Final private ModelPart leftEar;
@@ -47,25 +44,7 @@ public abstract class RabbitModelMixin extends EntityModel<Entity> implements Ba
     }
 
     @Override
-    public void transformTo(PoseStack pose, ModelPart part) {
-        // Check if young
-        if (this.young) {
-            // If the head
-            if (BasicModelTransformations.isIn(part, this.eamHeadParts)) {
-                pose.scale(0.56666666f, 0.56666666f, 0.56666666f);
-                pose.translate(0f, 1.375f, 0.125f);
-            } else {
-                // Else the rest of parts
-                pose.scale(0.4f, 0.4f, 0.4f);
-                pose.translate(0f, 2.25f, 0f);
-            }
-        } else {
-            // Otherwise for the adult
-            pose.scale(0.6f, 0.6f, 0.6f);
-            pose.translate(0f, 1f, 0f);
-        }
-
-        // Perform transformation
-        BasicModelTransformations.super.transformTo(pose, part);
+    public Set<ModelPart> head() {
+        return this.eamHeadParts;
     }
 }

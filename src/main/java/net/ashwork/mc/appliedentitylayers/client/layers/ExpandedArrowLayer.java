@@ -6,7 +6,7 @@
 package net.ashwork.mc.appliedentitylayers.client.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -14,6 +14,8 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
+
+import java.util.function.Function;
 
 /**
  * An extension on {@link net.minecraft.client.renderer.entity.layers.ArrowLayer}
@@ -33,7 +35,7 @@ public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>
      * @param getter the getter which obtains the transformations from the model
      * @param dispatcher the dispatcher used to render an entity
      */
-    public ExpandedArrowLayer(RenderLayerParent<T, M> parent, ModelTransformations.ModelTransformationsGetter<T, M> getter, EntityRenderDispatcher dispatcher) {
+    public ExpandedArrowLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, EntityRenderDispatcher dispatcher) {
         super(parent, getter, 0);
         this.dispatcher = dispatcher;
     }

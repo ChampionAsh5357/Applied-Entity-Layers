@@ -5,9 +5,13 @@
 
 package net.ashwork.mc.appliedentitylayers.api.client.model;
 
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * A registry for models which would like to use the entity layers provided by
@@ -16,25 +20,21 @@ import net.minecraft.world.entity.LivingEntity;
 public interface ModelRegistry {
 
     /**
-     * Registers a {@link ModelTransformations.ModelTransformationsGetter} for an
-     * entity to apply the necessary transformations for the given model. This
-     * assumes that {@link ModelTransformations} is implemented on the model itself.
+     * Registers a {@link ModelTransform.Factory} for a model to apply the
+     * required transforms.
      *
-     * @param type the entity type to register the transformation getter for
-     * @param <T> the type of the living entity
-     */
-    default <T extends LivingEntity> void registerTransformations(EntityType<T> type) {
-        this.registerTransformations(type, model -> (ModelTransformations) model);
-    }
-
-    /**
-     * Registers a {@link ModelTransformations.ModelTransformationsGetter} for an
-     * entity to apply the necessary transformations for the given model.
-     *
-     * @param type the entity type to register the transformation getter for
-     * @param getter the getter which obtains the transformations from the model
+     * @param model the class of the model to create the transforms for
+     * @param factory the factory used to create the transforms
      * @param <T> the type of the living entity
      * @param <M> the type of the entity model
      */
-    <T extends LivingEntity, M extends EntityModel<T>> void registerTransformations(EntityType<T> type, ModelTransformations.ModelTransformationsGetter<T, M> getter);
+    <T extends LivingEntity, M extends EntityModel<T>> void registerTransformFactory(Class<M> model, ModelTransform.Factory<T, M> factory);
+
+    // TODO: Document
+    default <T extends LivingEntity> void enableLayers(Supplier<? extends EntityType<T>> type, Consumer<ModelLayerSettings> settings) {
+        this.enableLayers(type.get(), settings);
+    }
+
+    // TODO: Document
+    <T extends LivingEntity> void enableLayers(EntityType<T> type, Consumer<ModelLayerSettings> settings);
 }

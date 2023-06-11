@@ -5,18 +5,21 @@
 
 package net.ashwork.mc.appliedentitylayers.client.model;
 
+import net.ashwork.mc.appliedentitylayers.api.client.model.ModelLayerSettings;
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelRegistry;
-import net.ashwork.mc.appliedentitylayers.api.client.model.ModelTransformations;
+import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.ashwork.mc.appliedentitylayers.client.layers.ExpandedArrowLayer;
 import net.ashwork.mc.appliedentitylayers.client.layers.ExpandedBeeStingerLayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -25,35 +28,28 @@ import java.util.function.Function;
  */
 public class ModelManager implements ModelRegistry {
 
-    private Map<EntityType<? extends LivingEntity>, ModelDataBuilder<?, ?>> modelDataBuilder;
+    private final Map<Class<? extends EntityModel<?>>, ModelTransform.Factory<?, ?>> transformGetters;
+    private Map<EntityType<? extends LivingEntity>, ModelDataBuilder> modelDataBuilder;
     private final Map<EntityType<? extends LivingEntity>, ModelData<?, ?>> modelData;
+
 
     /**
      * Constructs the manager for the models.
      */
     public ModelManager() {
+        this.transformGetters = new HashMap<>();
         this.modelDataBuilder = new HashMap<>();
         this.modelData = new HashMap<>();
     }
 
     @Override
-    public <T extends LivingEntity, M extends EntityModel<T>> void registerTransformations(EntityType<T> type, ModelTransformations.ModelTransformationsGetter<T, M> getter) {
-        ModelDataBuilder<T, M> builder = this.getOrCreateBuilder(type);
-        builder.partGetter(getter);
+    public <T extends LivingEntity, M extends EntityModel<T>> void registerTransformFactory(Class<M> model, ModelTransform.Factory<T, M> factory) {
+        this.transformGetters.put(model, factory);
     }
 
-    /**
-     * A helper to get or create the current builder with the type parameters
-     * properly cast.
-     *
-     * @param type the entity type the model data is for
-     * @return a builder for the model data
-     * @param <T> the type of the living entity
-     * @param <M> the type of the entity model
-     */
-    @SuppressWarnings("unchecked")
-    private <T extends LivingEntity, M extends EntityModel<T>> ModelDataBuilder<T, M> getOrCreateBuilder(EntityType<T> type) {
-        return (ModelDataBuilder<T, M>) this.modelDataBuilder.computeIfAbsent(type, t -> new ModelDataBuilder<>());
+    @Override
+    public <T extends LivingEntity> void enableLayers(EntityType<T> type, Consumer<ModelLayerSettings> settings) {
+        settings.accept(this.modelDataBuilder.computeIfAbsent(type, t -> new ModelDataBuilder()));
     }
 
     /**
@@ -96,13 +92,11 @@ public class ModelManager implements ModelRegistry {
 
     /**
      * A builder for the {@link ModelData}.
-     *
-     * @param <T> the type of the living entity
-     * @param <M> the type of the entity model
      */
-    private static class ModelDataBuilder<T extends LivingEntity, M extends EntityModel<T>> {
+    private class ModelDataBuilder implements ModelLayerSettings {
 
-        private ModelTransformations.ModelTransformationsGetter<T, M> transformations;
+        private boolean arrow = false;
+        private boolean beeStinger = false;
 
         /**
          * Constructs the model data builder.
@@ -110,12 +104,23 @@ public class ModelManager implements ModelRegistry {
         private ModelDataBuilder() {}
 
         /**
-         * Sets the transformations getter for the model.
+         * Enables the arrow layer for this entity type.
          *
-         * @param transformations the getter which obtains the transformations from the model
+         * @return the builder instance
          */
-        public void partGetter(ModelTransformations.ModelTransformationsGetter<T, M> transformations) {
-            this.transformations = transformations;
+        public ModelLayerSettings arrow() {
+            this.arrow = true;
+            return this;
+        }
+
+        /**
+         * Enables the bee stinger layer for this entity type.
+         *
+         * @return the builder instance
+         */
+        public ModelLayerSettings beeStinger() {
+            this.beeStinger = true;
+            return this;
         }
 
         /**
@@ -123,19 +128,33 @@ public class ModelManager implements ModelRegistry {
          *
          * @return the built model data
          */
-        public ModelData<T, M> build() {
-            return new ModelData<>(this.transformations);
+        public <T extends LivingEntity, M extends EntityModel<T>> ModelData<T, M> build() {
+            return new ModelData<>(this.arrow, this.beeStinger);
         }
     }
 
     /**
      * A record containing the model data associated with a given entity type.
      *
-     * @param transformations the getter which obtains the transformations from the model
      * @param <T> the type of the living entity
      * @param <M> the type of the entity model
      */
-    private record ModelData<T extends LivingEntity, M extends EntityModel<T>>(ModelTransformations.ModelTransformationsGetter<T, M> transformations) {
+    private class ModelData<T extends LivingEntity, M extends EntityModel<T>> {
+
+        private final boolean arrow, beeStinger;
+        private final Map<Class<M>, ModelTransform> transforms;
+
+        /**
+         * Constructs a new model data.
+         *
+         * @param arrow whether the arrow layer should be enabled
+         * @param beeStinger whether the bee stinger layer should be enabled
+         */
+        public ModelData(boolean arrow, boolean beeStinger) {
+            this.arrow = arrow;
+            this.beeStinger = beeStinger;
+            this.transforms = new HashMap<>();
+        }
 
         /**
          * Applies the layers to the renderer.
@@ -143,11 +162,20 @@ public class ModelManager implements ModelRegistry {
          * @param renderer the renderer to apply the layers to.
          * @param <R> the type of the entity renderer
          */
+        @SuppressWarnings("unchecked")
         public <R extends LivingEntityRenderer<T, M>> void apply(R renderer) {
-            if (this.transformations != null) {
-                renderer.addLayer(new ExpandedArrowLayer<>(renderer, this.transformations, Minecraft.getInstance().getEntityRenderDispatcher()));
-                renderer.addLayer(new ExpandedBeeStingerLayer<>(renderer, this.transformations));
-            }
+            // Clear transforms as layers are being reapplied
+            this.transforms.clear();
+
+            // Setup basic parameters
+            var order = (FirstOrLastLayerOrder<T, M>) renderer;
+            Function<RenderLayerParent<T, M>, ModelTransform> getter = parent -> this.transforms.computeIfAbsent((Class<M>) parent.getModel().getClass(), clazz -> {
+                ModelTransform.Factory<T, M> transformGetter = (ModelTransform.Factory<T, M>) ModelManager.this.transformGetters.get(clazz);
+                return transformGetter == null ? null : transformGetter.apply(parent.getModel());
+            });
+
+            if (this.beeStinger) order.addLayerFirst(new ExpandedBeeStingerLayer<>(renderer, getter));
+            if (this.arrow) order.addLayerFirst(new ExpandedArrowLayer<>(renderer, getter, Minecraft.getInstance().getEntityRenderDispatcher()));
         }
     }
 }

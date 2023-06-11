@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.client.model;
+package net.ashwork.mc.appliedentitylayers.api.client.model.extension;
 
 import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.Nullable;

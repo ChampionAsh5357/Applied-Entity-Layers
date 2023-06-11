@@ -3,10 +3,11 @@
     "minVersion": "0.8",
     "package": "net.ashwork.mc.appliedentitylayers.client.mixin",
     "compatibilityLevel": "JAVA_${java_version}",
+    "plugin": "net.ashwork.mc.appliedentitylayers.client.mixin.base.ConditionalConfigPlugin",
     "client": [
         "ModelPartMixin",
+        "LivingEntityRendererMixin",
         "SimpleEntityModelMixin",
-        "CamelModelMixin",
         "LlamaModelMixin",
         "RabbitModelMixin",
         "TurtleModelMixin",

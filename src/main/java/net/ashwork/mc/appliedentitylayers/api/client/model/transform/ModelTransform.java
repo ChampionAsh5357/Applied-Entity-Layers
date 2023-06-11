@@ -3,22 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.api.client.model;
+package net.ashwork.mc.appliedentitylayers.api.client.model.transform;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.ashwork.mc.appliedentitylayers.api.client.model.extension.ModelPartExtension;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
  * A helper for applying transformations based on data associated with the current
  * model.
  */
-public interface ModelTransformations {
+public interface ModelTransform {
 
     /**
      * Gets a random {@link ModelPart} from the current model. When {@code null},
@@ -31,7 +33,6 @@ public interface ModelTransformations {
      * @return the chosen {@link ModelPart}, or {@code null} if nothing should
      * be rendered
      */
-    @Nullable
     ModelPart getRandomModelPart(RandomSource random);
 
     /**
@@ -47,11 +48,36 @@ public interface ModelTransformations {
     default void transformTo(PoseStack pose, ModelPart part) {}
 
     /**
-     * A helper to get the {@link ModelTransformations} associated with a specified
+     * A factory to get the {@link ModelTransform} associated with a specified
      * model.
      *
      * @param <T> the type of the living entity
      * @param <M> the type of the entity model
      */
-    interface ModelTransformationsGetter<T extends LivingEntity, M extends EntityModel<T>> extends Function<M, ModelTransformations> {}
+    interface Factory<T extends LivingEntity, M extends EntityModel<T>> extends Function<M, ModelTransform> {}
+
+    /**
+     * Gets all non-empty parts and returns them in a list.
+     *
+     * @param root the root part
+     * @return a list of all non-empty parts
+     */
+    static List<ModelPart> parts(ModelPart root) {
+        return root.getAllParts().filter(part -> !part.isEmpty()).toList();
+    }
+
+    /**
+     * {@return whether the part or its parents are in the provided set}
+     *
+     * @param part the part to check
+     * @param partSet the part set to see whether the part or its parents are in
+     */
+    static boolean isIn(ModelPart part, Set<ModelPart> partSet) {
+        while (part != null) {
+            // If a part or its parent is in the list, return true
+            if (partSet.contains(part)) return true;
+            part = ((ModelPartExtension) (Object) part).getParent();
+        }
+        return false;
+    }
 }
