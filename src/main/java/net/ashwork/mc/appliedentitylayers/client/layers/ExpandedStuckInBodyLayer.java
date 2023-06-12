@@ -29,6 +29,8 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
 
     private final Supplier<ModelTransform> getter;
     private final int offset;
+    private M oParentModel;
+    private ModelTransform oTransform;
 
     /**
      * Constructs the layer for rendering stuck objects.
@@ -41,6 +43,8 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
         super(parent);
         this.getter = () -> getter.apply(parent);
         this.offset = offset;
+        this.oParentModel = this.getParentModel();
+        this.oTransform = this.getter.get();
     }
 
     /**
@@ -67,26 +71,31 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
 
     @Override
     public void render(PoseStack pose, MultiBufferSource vao, int packedLight, T entity, float walkPosition, float walkSpeed, float partialTick, float bob, float yRot, float xRot) {
+        // Check if parent model is different, and if so update
+        if (this.oParentModel != this.getParentModel()) {
+            this.oParentModel = this.getParentModel();
+            this.oTransform = this.getter.get();
+        }
+
+        // Skip if no transform is available
+        if (this.oTransform == null) return;
+
         // Check if there are any stuck
         var stuck = this.numStuck(entity);
         if (stuck > 0) {
             // Create random and getter
             var random = RandomSource.create(entity.getId() + this.offset);
-            var transform = this.getter.get();
-
-            // Skip if no transform is available
-            if (transform == null) return;
 
             // For each stuck object
             for (int i = 0; i < stuck; ++i) {
                 pose.pushPose();
 
                 // Get random part
-                var part = transform.getRandomModelPart(random);
+                var part = this.oTransform.getRandomModelPart(random);
 
                 // Apply transform
                 var cube = part.getRandomCube(random);
-                transform.transformTo(pose, part);
+                this.oTransform.transformTo(pose, part);
 
                 // Translate to stuck position
                 var xRand = random.nextFloat();
