@@ -1,12 +1,14 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.client.extension;
 
-import net.minecraft.client.model.geom.ModelPart;
+import net.ashwork.mc.appliedentitylayers.api.client.model.extension.BodyModelParts;
+import net.ashwork.mc.appliedentitylayers.api.client.model.extension.HeadModelParts;
 
-import java.util.Set;
-
-public interface LlamaModelExtension {
-
-    Set<ModelPart> head();
-
-    Set<ModelPart> body();
-}
+/**
+ * An extension interface applied to a {@link net.minecraft.client.model.LlamaModel}.
+ */
+public interface LlamaModelExtension extends HeadModelParts, BodyModelParts {}

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.client.mixin.base;
 
 import net.minecraft.Util;
@@ -23,11 +28,12 @@ public class ConditionalConfigPlugin implements IMixinConfigPlugin {
      * A map containing an easy lookup for all packages within the mods this mod
      * cares about.
      */
-    private static final Map<String, Predicate<String>> MOD_PACKAGE_PREFIX = Util.make(new HashMap<>(), map -> {
-        map.put("twilightforest", s -> s.startsWith("twilightforest."));
-    });
+    private static final Map<String, Predicate<String>> MOD_PACKAGE_PREFIX = Util.make(new HashMap<>(), map -> map.put("twilightforest", s -> s.startsWith("twilightforest.")));
     private final List<Predicate<String>> blacklist;
 
+    /**
+     * Constructs the companion plugin.
+     */
     public ConditionalConfigPlugin() {
         this.blacklist = new ArrayList<>();
 

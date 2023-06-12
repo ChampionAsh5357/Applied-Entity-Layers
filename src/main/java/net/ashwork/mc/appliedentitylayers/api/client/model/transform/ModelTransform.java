@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A helper for applying transformations based on data associated with the current
+ * A helper for applying transforms based on data associated with the current
  * model.
  */
 public interface ModelTransform {
@@ -36,14 +36,14 @@ public interface ModelTransform {
     ModelPart getRandomModelPart(RandomSource random);
 
     /**
-     * Applies additional transformations from the {@link ModelPart} to the
+     * Applies additional transforms from the {@link ModelPart} to the
      * {@link PoseStack}.
      *
      * <p>Poses should not be pushed or popped inside this method as that is
      * handled by the associated consumer.
      *
-     * @param pose the pose to apply the transformations to
-     * @param part the part providing the transformations
+     * @param pose the pose to apply the transforms to
+     * @param part the part providing the transforms
      */
     default void transformTo(PoseStack pose, ModelPart part) {}
 

@@ -32,7 +32,7 @@ public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>
      * Constructs the arrow layer.
      *
      * @param parent the parent holding the layer
-     * @param getter the getter which obtains the transformations from the model
+     * @param getter the getter which obtains the transforms from the model
      * @param dispatcher the dispatcher used to render an entity
      */
     public ExpandedArrowLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, EntityRenderDispatcher dispatcher) {

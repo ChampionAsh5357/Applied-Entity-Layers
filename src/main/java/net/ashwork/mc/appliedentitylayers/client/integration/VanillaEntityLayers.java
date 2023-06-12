@@ -83,14 +83,13 @@ import net.minecraft.client.model.WitherBossModel;
 import net.minecraft.client.model.WolfModel;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.ZombieVillagerModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.animal.Turtle;
-import net.minecraft.world.entity.animal.camel.Camel;
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * A plugin integration to apply entity layers to Minecraft entities.
@@ -107,7 +106,7 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerTransformFactory(BatModel.class, simple());
         registry.registerTransformFactory(BeeModel.class, ageableList());
         registry.registerTransformFactory(BlazeModel.class, simple());
-        registry.registerTransformFactory(CamelModel.class, camel());
+        registry.registerTransformFactory(CamelModel.class, factory(CamelModelTransform::new));
         registry.registerTransformFactory(CatModel.class, ageableList());
         registry.registerTransformFactory(ChestedHorseModel.class, ageableList());
         registry.registerTransformFactory(ChickenModel.class, ageableList());
@@ -129,7 +128,7 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerTransformFactory(IllagerModel.class, simple());
         registry.registerTransformFactory(IronGolemModel.class, simple());
         registry.registerTransformFactory(LavaSlimeModel.class, simple());
-        registry.registerTransformFactory(LlamaModel.class, llama());
+        registry.registerTransformFactory(LlamaModel.class, factory(LlamaModelTransform::new));
         registry.registerTransformFactory(OcelotModel.class, ageableList());
         registry.registerTransformFactory(PandaModel.class, ageableList());
         registry.registerTransformFactory(ParrotModel.class, simple());
@@ -140,7 +139,7 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerTransformFactory(PufferfishBigModel.class, simple());
         registry.registerTransformFactory(PufferfishMidModel.class, simple());
         registry.registerTransformFactory(PufferfishSmallModel.class, simple());
-        registry.registerTransformFactory(RabbitModel.class, rabbit());
+        registry.registerTransformFactory(RabbitModel.class, factory(RabbitModelTransform::new));
         registry.registerTransformFactory(RavagerModel.class, simple());
         registry.registerTransformFactory(SalmonModel.class, simple());
         registry.registerTransformFactory(SheepModel.class, ageableList());
@@ -156,7 +155,7 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerTransformFactory(TadpoleModel.class, ageableList());
         registry.registerTransformFactory(TropicalFishModelA.class, simple());
         registry.registerTransformFactory(TropicalFishModelB.class, simple());
-        registry.registerTransformFactory(TurtleModel.class, turtle());
+        registry.registerTransformFactory(TurtleModel.class, factory(TurtleModelTransform::new));
         registry.registerTransformFactory(VexModel.class, simple());
         registry.registerTransformFactory(VillagerModel.class, simple());
         registry.registerTransformFactory(WardenModel.class, simple());
@@ -166,7 +165,7 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
         registry.registerTransformFactory(ZombieModel.class, ageableList());
         registry.registerTransformFactory(ZombieVillagerModel.class, ageableList());
 
-        List.of(
+        registry.enableLayers(settings -> settings.arrow().beeStinger(),
                 EntityType.ALLAY, EntityType.ARMOR_STAND, EntityType.AXOLOTL,
                 EntityType.BAT, EntityType.BEE, EntityType.BLAZE,
                 EntityType.CAMEL, EntityType.CAT, EntityType.CAVE_SPIDER,
@@ -194,36 +193,51 @@ public class VanillaEntityLayers implements AppliedEntityLayersPlugin {
                 EntityType.WITHER_SKELETON, EntityType.WOLF, EntityType.ZOGLIN,
                 EntityType.ZOMBIE, EntityType.ZOMBIE_HORSE, EntityType.ZOMBIE_VILLAGER,
                 EntityType.ZOMBIFIED_PIGLIN
-        ).forEach(
-                type -> registry.enableLayers(type, settings -> settings.arrow().beeStinger())
         );
     }
 
+    /**
+     * A transform factory constructed for the specified {@link ModelTransform}.
+     *
+     * @param factory the factory to create the transform from
+     * @return a factory to get the transform of
+     * @param <T> the type of the living entity
+     * @param <M> the type of the entity model
+     */
+    private static <T extends LivingEntity, M extends EntityModel<T>> ModelTransform.Factory<T, M> factory(BiFunction<M, Function<M, List<ModelPart>>, ModelTransform> factory) {
+        return model -> factory.apply(model, m -> ((EntityModelExtension) m).nonEmptyParts());
+    }
+
+    /**
+     * Constructs a simple transform factory constructed for an {@link EntityModel}.
+     *
+     * @return a factory to get the transform of
+     * @param <T> the type of the living entity
+     * @param <M> the type of the entity model
+     */
     private static <T extends LivingEntity, M extends EntityModel<T>> ModelTransform.Factory<T, M> simple() {
-        return model -> new EntityModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
+        return factory(EntityModelTransform::new);
     }
 
+    /**
+     * Constructs a simple transform factory constructed for an {@link AgeableListModel}.
+     *
+     * @return a factory to get the transform of
+     * @param <T> the type of the living entity
+     * @param <M> the type of the entity model
+     */
     private static <T extends LivingEntity, M extends AgeableListModel<T>> ModelTransform.Factory<T, M> ageableList() {
-        return model -> new AgeableListModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
+        return factory(AgeableListModelTransform::new);
     }
 
+    /**
+     * Constructs a simple transform factory constructed for an {@link AgeableHierarchicalModel}.
+     *
+     * @return a factory to get the transform of
+     * @param <T> the type of the living entity
+     * @param <M> the type of the entity model
+     */
     private static <T extends LivingEntity, M extends AgeableHierarchicalModel<T>> ModelTransform.Factory<T, M> ageableHierarchical() {
-        return model -> new AgeableHierarchicalModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
-    }
-
-    private static <T extends Camel, M extends CamelModel<T>> ModelTransform.Factory<T, M> camel() {
-        return model -> new CamelModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
-    }
-
-    private static <T extends AbstractChestedHorse, M extends LlamaModel<T>> ModelTransform.Factory<T, M> llama() {
-        return model -> new LlamaModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
-    }
-
-    private static <T extends Rabbit, M extends RabbitModel<T>> ModelTransform.Factory<T, M> rabbit() {
-        return model -> new RabbitModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
-    }
-
-    private static <T extends Turtle, M extends TurtleModel<T>> ModelTransform.Factory<T, M> turtle() {
-        return model -> new TurtleModelTransform<>(model, m -> ((EntityModelExtension) m).nonEmptyParts());
+        return factory(AgeableHierarchicalModelTransform::new);
     }
 }

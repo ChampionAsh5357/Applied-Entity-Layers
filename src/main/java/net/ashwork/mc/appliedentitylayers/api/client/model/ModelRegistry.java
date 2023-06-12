@@ -10,6 +10,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -30,11 +31,23 @@ public interface ModelRegistry {
      */
     <T extends LivingEntity, M extends EntityModel<T>> void registerTransformFactory(Class<M> model, ModelTransform.Factory<T, M> factory);
 
-    // TODO: Document
-    default <T extends LivingEntity> void enableLayers(Supplier<? extends EntityType<T>> type, Consumer<ModelLayerSettings> settings) {
-        this.enableLayers(type.get(), settings);
+    /**
+     * Enables the layers to display on the associated entities.
+     *
+     * @param settings the settings to apply to the entity
+     * @param types the entities to apply the settings to
+     */
+    @SuppressWarnings("unchecked")
+    default void enableLayers(Consumer<ModelLayerSettings> settings, Supplier<? extends EntityType<? extends LivingEntity>>... types) {
+        this.enableLayers(settings, Arrays.stream(types).map(Supplier::get).toArray(EntityType[]::new));
     }
 
-    // TODO: Document
-    <T extends LivingEntity> void enableLayers(EntityType<T> type, Consumer<ModelLayerSettings> settings);
+    /**
+     * Enables the layers to display on the associated entities.
+     *
+     * @param settings the settings to apply to the entity
+     * @param types the entities to apply the settings to
+     */
+    @SuppressWarnings("unchecked")
+    void enableLayers(Consumer<ModelLayerSettings> settings, EntityType<? extends LivingEntity>... types);
 }

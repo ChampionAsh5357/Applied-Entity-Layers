@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import net.ashwork.mc.appliedentitylayers.client.model.FirstOrLastLayerOrder;
@@ -11,14 +16,14 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-// TODO: Document
+/**
+ * A mixin applied to {@link LivingEntityRenderer}.
+ */
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityModel<T>> implements FirstOrLastLayerOrder<T, M> {
 
-
-    @Shadow public abstract boolean addLayer(RenderLayer<T, M> pLayer);
-
     @Shadow @Final protected List<RenderLayer<T, M>> layers;
+    @Shadow public abstract boolean addLayer(RenderLayer<T, M> pLayer);
 
     @Override
     public void addLayerFirst(RenderLayer<T, M> layer) {

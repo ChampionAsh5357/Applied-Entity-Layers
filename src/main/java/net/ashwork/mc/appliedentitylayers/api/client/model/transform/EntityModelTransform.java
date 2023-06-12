@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) ChampionAsh5357
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.ashwork.mc.appliedentitylayers.api.client.model.transform;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,12 +17,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-// TODO: Document
+/**
+ * A transform implementation for a simple {@link EntityModel}.
+ *
+ * @param <T> the type of the living entity
+ * @param <M> the type of the entity model
+ */
 public class EntityModelTransform<T extends LivingEntity, M extends EntityModel<T>> implements ModelTransform {
 
     protected final M model;
     private final List<ModelPart> nonEmptyParts;
 
+    /**
+     * Constructs a transform for a model.
+     *
+     * @param model the model the transform is applied to
+     * @param nonEmptyParts a function which gets the non-empty parts of the model
+     */
     public EntityModelTransform(M model, Function<M, List<ModelPart>> nonEmptyParts) {
         this.model = model;
         this.nonEmptyParts = nonEmptyParts.apply(this.model);
@@ -33,15 +49,15 @@ public class EntityModelTransform<T extends LivingEntity, M extends EntityModel<
 
     @Override
     public void transformTo(PoseStack pose, ModelPart part) {
-        // Get all parts to apply transformations for
-        List<ModelPart> transformations = new ArrayList<>();
+        // Get all parts to apply transforms for
+        List<ModelPart> transforms = new ArrayList<>();
         while (part != null) {
-            // Transformations are applied from parent -> child
-            transformations.add(0, part);
+            // Transforms are applied from parent -> child
+            transforms.add(0, part);
             part = ((ModelPartExtension) (Object) part).getParent();
         }
 
-        // Apply transformations
-        transformations.forEach(transform -> transform.translateAndRotate(pose));
+        // Apply transforms
+        transforms.forEach(transform -> transform.translateAndRotate(pose));
     }
 }

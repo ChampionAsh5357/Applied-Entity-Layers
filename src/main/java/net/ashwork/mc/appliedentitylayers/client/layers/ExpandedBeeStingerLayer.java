@@ -35,7 +35,7 @@ public class ExpandedBeeStingerLayer<T extends LivingEntity, M extends EntityMod
      * Constructs the bee stinger layer.
      *
      * @param parent the parent holding the layer
-     * @param getter the getter which obtains the transformations from the model
+     * @param getter the getter which obtains the transforms from the model
      */
     public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter) {
         super(parent, getter, 1);

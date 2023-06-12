@@ -26,7 +26,7 @@ public abstract class AgeableHierarchicalModelMixin implements AgeableHierarchic
     }
 
     @Override
-    public float bodyYOffset() {
+    public float babyYOffset() {
         return this.bodyYOffset;
     }
 }

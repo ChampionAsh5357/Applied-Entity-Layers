@@ -6,7 +6,7 @@
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
 import com.google.common.collect.ImmutableSet;
-import net.ashwork.mc.appliedentitylayers.client.extension.RabbitModelExtension;
+import net.ashwork.mc.appliedentitylayers.api.client.model.extension.HeadModelParts;
 import net.minecraft.client.model.RabbitModel;
 import net.minecraft.client.model.geom.ModelPart;
 import org.spongepowered.asm.mixin.Final;
@@ -23,7 +23,7 @@ import java.util.Set;
  * A mixin applied to {@link RabbitModel}.
  */
 @Mixin(RabbitModel.class)
-public abstract class RabbitModelMixin implements RabbitModelExtension {
+public abstract class RabbitModelMixin implements HeadModelParts {
 
     @Shadow @Final private ModelPart head;
     @Shadow @Final private ModelPart leftEar;
@@ -44,7 +44,7 @@ public abstract class RabbitModelMixin implements RabbitModelExtension {
     }
 
     @Override
-    public Set<ModelPart> head() {
+    public Set<ModelPart> headSet() {
         return this.eamHeadParts;
     }
 }

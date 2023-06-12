@@ -34,7 +34,7 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
      * Constructs the layer for rendering stuck objects.
      *
      * @param parent the parent holding the layer
-     * @param getter the getter which obtains the transformations from the model
+     * @param getter the getter which obtains the transforms from the model
      * @param offset an offset to apply to the entity id when creating the random
      */
     public ExpandedStuckInBodyLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, int offset) {
@@ -54,7 +54,7 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
      * Renders the item stuck in the entity. The pose is already translated to
      * the location the item is stuck.
      *
-     * @param pose the pose containing the transformations of the stuck item
+     * @param pose the pose containing the transforms of the stuck item
      * @param vao the access object to get the buffer
      * @param packedLight the light of the block and sky
      * @param entity the entity to render on
@@ -74,7 +74,7 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
             var random = RandomSource.create(entity.getId() + this.offset);
             var transform = this.getter.get();
 
-            // Skip if no transformations are available
+            // Skip if no transform is available
             if (transform == null) return;
 
             // For each stuck object

@@ -43,12 +43,12 @@ public abstract class LlamaModelMixin implements LlamaModelExtension {
     }
 
     @Override
-    public Set<ModelPart> head() {
+    public Set<ModelPart> headSet() {
         return this.eamHeadParts;
     }
 
     @Override
-    public Set<ModelPart> body() {
+    public Set<ModelPart> bodySet() {
         return this.eamBodyParts;
     }
 }

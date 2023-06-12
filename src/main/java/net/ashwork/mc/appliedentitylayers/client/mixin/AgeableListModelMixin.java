@@ -5,12 +5,15 @@
 
 package net.ashwork.mc.appliedentitylayers.client.mixin;
 
+import com.google.common.collect.Sets;
 import net.ashwork.mc.appliedentitylayers.api.client.model.extension.AgeableListModelExtension;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.Set;
 
 /**
  * A mixin applied to {@link AgeableListModel}.
@@ -52,12 +55,12 @@ public abstract class AgeableListModelMixin implements AgeableListModelExtension
     }
 
     @Override
-    public float bodyYOffset() {
+    public float babyBodyYOffset() {
         return this.bodyYOffset;
     }
 
     @Override
-    public Iterable<ModelPart> head() {
-        return this.headParts();
+    public Set<ModelPart> headSet() {
+        return Sets.newHashSet(this.headParts());
     }
 }

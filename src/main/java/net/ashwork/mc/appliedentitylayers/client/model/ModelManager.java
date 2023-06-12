@@ -47,9 +47,10 @@ public class ModelManager implements ModelRegistry {
         this.transformGetters.put(model, factory);
     }
 
+    @SafeVarargs
     @Override
-    public <T extends LivingEntity> void enableLayers(EntityType<T> type, Consumer<ModelLayerSettings> settings) {
-        settings.accept(this.modelDataBuilder.computeIfAbsent(type, t -> new ModelDataBuilder()));
+    public final void enableLayers(Consumer<ModelLayerSettings> settings, EntityType<? extends LivingEntity>... types) {
+        for (var type : types) settings.accept(this.modelDataBuilder.computeIfAbsent(type, t -> new ModelDataBuilder()));
     }
 
     /**
@@ -103,21 +104,13 @@ public class ModelManager implements ModelRegistry {
          */
         private ModelDataBuilder() {}
 
-        /**
-         * Enables the arrow layer for this entity type.
-         *
-         * @return the builder instance
-         */
+        @Override
         public ModelLayerSettings arrow() {
             this.arrow = true;
             return this;
         }
 
-        /**
-         * Enables the bee stinger layer for this entity type.
-         *
-         * @return the builder instance
-         */
+        @Override
         public ModelLayerSettings beeStinger() {
             this.beeStinger = true;
             return this;
@@ -134,7 +127,7 @@ public class ModelManager implements ModelRegistry {
     }
 
     /**
-     * A record containing the model data associated with a given entity type.
+     * A class containing the model data associated with a given entity type.
      *
      * @param <T> the type of the living entity
      * @param <M> the type of the entity model
@@ -142,7 +135,7 @@ public class ModelManager implements ModelRegistry {
     private class ModelData<T extends LivingEntity, M extends EntityModel<T>> {
 
         private final boolean arrow, beeStinger;
-        private final Map<Class<M>, ModelTransform> transforms;
+        private final Map<M, ModelTransform> transforms;
 
         /**
          * Constructs a new model data.
@@ -169,8 +162,8 @@ public class ModelManager implements ModelRegistry {
 
             // Setup basic parameters
             var order = (FirstOrLastLayerOrder<T, M>) renderer;
-            Function<RenderLayerParent<T, M>, ModelTransform> getter = parent -> this.transforms.computeIfAbsent((Class<M>) parent.getModel().getClass(), clazz -> {
-                ModelTransform.Factory<T, M> transformGetter = (ModelTransform.Factory<T, M>) ModelManager.this.transformGetters.get(clazz);
+            Function<RenderLayerParent<T, M>, ModelTransform> getter = parent -> this.transforms.computeIfAbsent(parent.getModel(), model -> {
+                ModelTransform.Factory<T, M> transformGetter = (ModelTransform.Factory<T, M>) ModelManager.this.transformGetters.get(model.getClass());
                 return transformGetter == null ? null : transformGetter.apply(parent.getModel());
             });
 
