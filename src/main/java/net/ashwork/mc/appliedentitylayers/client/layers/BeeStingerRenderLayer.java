@@ -26,7 +26,7 @@ import java.util.function.Function;
  * @param <T> the type of the living entity
  * @param <M> the type of the entity model
  */
-public class ExpandedBeeStingerLayer<T extends LivingEntity, M extends EntityModel<T>> extends ExpandedStuckInBodyLayer<T, M> {
+public class BeeStingerRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends StuckInBodyRenderLayer<T, M> {
 
     private static final ResourceLocation BEE_STINGER_LOCATION = new ResourceLocation("textures/entity/bee/bee_stinger.png");
     private final RenderType type;
@@ -37,7 +37,7 @@ public class ExpandedBeeStingerLayer<T extends LivingEntity, M extends EntityMod
      * @param parent the parent holding the layer
      * @param getter the getter which obtains the transforms from the model
      */
-    public ExpandedBeeStingerLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter) {
+    public BeeStingerRenderLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter) {
         super(parent, getter, 1);
         this.type = RenderType.entityCutoutNoCull(BEE_STINGER_LOCATION);
     }

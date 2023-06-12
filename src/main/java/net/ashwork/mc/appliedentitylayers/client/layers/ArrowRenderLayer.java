@@ -24,7 +24,7 @@ import java.util.function.Function;
  * @param <T> the type of the living entity
  * @param <M> the type of the entity model
  */
-public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extends ExpandedStuckInBodyLayer<T, M> {
+public class ArrowRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends StuckInBodyRenderLayer<T, M> {
 
     private final EntityRenderDispatcher dispatcher;
 
@@ -35,7 +35,7 @@ public class ExpandedArrowLayer<T extends LivingEntity, M extends EntityModel<T>
      * @param getter the getter which obtains the transforms from the model
      * @param dispatcher the dispatcher used to render an entity
      */
-    public ExpandedArrowLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, EntityRenderDispatcher dispatcher) {
+    public ArrowRenderLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, EntityRenderDispatcher dispatcher) {
         super(parent, getter, 0);
         this.dispatcher = dispatcher;
     }

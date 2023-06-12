@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  * @param <T> the type of the living entity
  * @param <M> the type of the entity model
  */
-public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public abstract class StuckInBodyRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 
     private final Supplier<ModelTransform> getter;
     private final int offset;
@@ -39,7 +39,7 @@ public abstract class ExpandedStuckInBodyLayer<T extends LivingEntity, M extends
      * @param getter the getter which obtains the transforms from the model
      * @param offset an offset to apply to the entity id when creating the random
      */
-    public ExpandedStuckInBodyLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, int offset) {
+    public StuckInBodyRenderLayer(RenderLayerParent<T, M> parent, Function<RenderLayerParent<T, M>, ModelTransform> getter, int offset) {
         super(parent);
         this.getter = () -> getter.apply(parent);
         this.offset = offset;

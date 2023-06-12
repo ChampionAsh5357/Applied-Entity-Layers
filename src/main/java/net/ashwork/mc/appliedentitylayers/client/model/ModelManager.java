@@ -8,8 +8,8 @@ package net.ashwork.mc.appliedentitylayers.client.model;
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelLayerSettings;
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelRegistry;
 import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
-import net.ashwork.mc.appliedentitylayers.client.layers.ExpandedArrowLayer;
-import net.ashwork.mc.appliedentitylayers.client.layers.ExpandedBeeStingerLayer;
+import net.ashwork.mc.appliedentitylayers.client.layers.ArrowRenderLayer;
+import net.ashwork.mc.appliedentitylayers.client.layers.BeeStingerRenderLayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -167,8 +167,8 @@ public class ModelManager implements ModelRegistry {
                 return transformGetter == null ? null : transformGetter.apply(parent.getModel());
             });
 
-            if (this.beeStinger) order.addLayerFirst(new ExpandedBeeStingerLayer<>(renderer, getter));
-            if (this.arrow) order.addLayerFirst(new ExpandedArrowLayer<>(renderer, getter, Minecraft.getInstance().getEntityRenderDispatcher()));
+            if (this.beeStinger) order.addLayerFirst(new BeeStingerRenderLayer<>(renderer, getter));
+            if (this.arrow) order.addLayerFirst(new ArrowRenderLayer<>(renderer, getter, Minecraft.getInstance().getEntityRenderDispatcher()));
         }
     }
 }
