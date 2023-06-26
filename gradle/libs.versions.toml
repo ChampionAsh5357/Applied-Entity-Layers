@@ -3,9 +3,9 @@
 java = "17"
 
 # Minecraft
-minecraft = "1.20"
-forge_main = "1.20-46.0.13"
-parchment_mappings = "1.19.3-2023.03.12"
+minecraft = "1.20.1"
+forge_main = "1.20.1-47.0.19"
+parchment_mappings = "2023.06.26"
 
 # Mixin
 mixin_processor = "0.8.5"
