@@ -7,7 +7,7 @@ package net.ashwork.mc.appliedentitylayers.client;
 
 import net.ashwork.mc.appliedentitylayers.api.ConditionalPlugin;
 import net.ashwork.mc.appliedentitylayers.api.client.AppliedEntityLayersPlugin;
-import net.ashwork.mc.appliedentitylayers.client.model.ModelManager;
+import net.ashwork.mc.appliedentitylayers.client.model.manager.ModelManager;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -68,6 +68,6 @@ public class AppliedEntityLayersClient {
      * @param event an event instance
      */
     private static void addLayers(EntityRenderersEvent.AddLayers event) {
-        MODEL_MANAGER.applyLayers(event::getRenderer);
+        MODEL_MANAGER.applyLayers(event::getRenderer, event.getEntityModels());
     }
 }

@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-package net.ashwork.mc.appliedentitylayers.client.model;
+package net.ashwork.mc.appliedentitylayers.client.model.manager;
 
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelLayerSettings;
 import net.ashwork.mc.appliedentitylayers.api.client.model.ModelRegistry;
 import net.ashwork.mc.appliedentitylayers.api.client.model.transform.ModelTransform;
 import net.ashwork.mc.appliedentitylayers.client.layers.ArrowRenderLayer;
 import net.ashwork.mc.appliedentitylayers.client.layers.BeeStingerRenderLayer;
+import net.ashwork.mc.appliedentitylayers.client.model.FirstOrLastLayerOrder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,15 +34,17 @@ public class ModelManager implements ModelRegistry {
     private final Map<Class<? extends EntityModel<?>>, ModelTransform.Factory<?, ?>> transformGetters;
     private Map<EntityType<? extends LivingEntity>, ModelDataBuilder> modelDataBuilder;
     private final Map<EntityType<? extends LivingEntity>, ModelData<?, ?>> modelData;
-
+    private final ArmorModelManager armor;
 
     /**
      * Constructs the manager for the models.
      */
     public ModelManager() {
-        this.transformGetters = new HashMap<>();
-        this.modelDataBuilder = new HashMap<>();
-        this.modelData = new HashMap<>();
+        this.transformGetters = new IdentityHashMap<>();
+        this.modelDataBuilder = new IdentityHashMap<>();
+        this.modelData = new IdentityHashMap<>();
+
+        this.armor = new ArmorModelManager();
     }
 
     @Override
@@ -70,9 +75,11 @@ public class ModelManager implements ModelRegistry {
      * entities.
      *
      * @param rendererGetter a getter which can obtain a renderer from the entity type
+     * @param modelSet the set of models applied to entities
      */
-    public void applyLayers(Function<EntityType<? extends LivingEntity>, LivingEntityRenderer<?, ?>> rendererGetter) {
+    public void applyLayers(Function<EntityType<? extends LivingEntity>, LivingEntityRenderer<?, ?>> rendererGetter, EntityModelSet modelSet) {
         this.modelData.forEach((type, data) -> this.apply(data, rendererGetter.apply(type)));
+        this.armor.applyLayers(modelSet);
     }
 
     /**
